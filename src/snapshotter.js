@@ -5,10 +5,10 @@ const snapshotter = exports.snapshotter = async function snapshotter(filename) {
     ffmpeg.setFfmpegPath(ffmpegPath);
     ffmpeg.setFfprobePath(ffprobePath);
 
-    ffmpeg('/nwHacks/nwhacks2020-backend/resource/' + filename)
+    ffmpeg('./resource/' + filename)
     .screenshots({
         count: 10,
         filename: 'thumbnail-at-%s-seconds.png',
-        folder: '/nwHacks/nwhacks2020-backend/output',
+        folder: './output',
     });
 }
