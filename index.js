@@ -20,11 +20,21 @@ app.get('/visionApi', async (req, res) => {
 });
 
 app.get('/nlpApi', async (req, res) => {
-    await _nlp.nlpApi();
+    try {
+        const result = await _nlp.nlpApi('I do not ever want to see your stupid fucking face again you fucking piece of shit!');
+        return res.status(200).send(result);
+    } catch (error) {
+        return res.send(error);
+    }
 });
 
 app.get('/snapshotter', async (req, res) => {
-    await _snapshotter.snapshotter('call-me-maybe.mp4');
+    try {
+        const result = await _snapshotter.snapshotter('garyVideo.mp4');
+        return res.status(200).send(result);
+    } catch (error) {
+        return res.send(error);
+    }
 });
 
 app.get('/videoApi', async (req, res) => {
