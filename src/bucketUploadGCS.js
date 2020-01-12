@@ -5,20 +5,21 @@
 // const filename = 'Local file to upload, e.g. ./local/path/to/file.txt';
 
 // Imports the Google Cloud client library
-const {Storage} = require('@google-cloud/storage');
+const {
+  Storage
+} = require('@google-cloud/storage');
 
 // Creates a client
 
 const uploadObject = exports.uploadObject = async function uploadObject(filename) {
   console.log('uploading file');
-  return uploadFile(filename);
+  return await uploadFile('./resource/' + filename);
 }
 
 const storage = new Storage();
 
 async function uploadFile(filename) {
   // Uploads a local file to the bucket
-  console.log(filename);
   await storage.bucket('video-bucket-nwhacks2020').upload(filename, {
     // Support for HTTP requests made with `Accept-Encoding: gzip`
     gzip: true,
@@ -30,11 +31,14 @@ async function uploadFile(filename) {
       // (If the contents will change, use cacheControl: 'no-cache')
       cacheControl: 'public, max-age=31536000',
     },
+  }).then((result) => {
+    console.log(`${filename} uploaded to video-bucket-nwhacks2020.`);
+    return {
+      bucketName: 'video-bucket-nwhacks2020',
+      filename: filename
+    };
+  }).catch((error) => {
+    console.log(error);
+    return;
   });
-
-  console.log(`${filename} uploaded to video-bucket-nwhacks2020.`);
-  return {
-    bucketName : 'video-bucket-nwhacks2020',
-    filename : filename.substring(filename.lastIndexOf('/')+1, filename.length)
-  };
 }
