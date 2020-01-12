@@ -5,9 +5,7 @@
 // const filename = 'Local file to upload, e.g. ./local/path/to/file.txt';
 
 // Imports the Google Cloud client library
-const {
-  Storage
-} = require('@google-cloud/storage');
+const { Storage } = require('@google-cloud/storage');
 
 // Creates a client
 

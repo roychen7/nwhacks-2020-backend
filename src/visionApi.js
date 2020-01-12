@@ -8,7 +8,7 @@ const visionApi = exports.visionApi = async function visionApi(filename) {
   /**
    * TODO(developer): Uncomment the following line before running the sample.
    */
-  const fileName = './resource/' + filename;
+  const fileName = './output/' + filename;
 
   const [result] = await client.faceDetection(fileName);
   const faces = result.faceAnnotations;

@@ -7,6 +7,7 @@ const _nlp = require('./src/nlpApi.js');
 const _snapshotter = require('./src/snapshotter.js');
 const _videoApi = require('./src/videoApi.js');
 const _bucketUpload = require('./src/bucketUploadGCS.js');
+const _getStats = require('./src/getStats.js');
 
 app.get('/visionApi', async (req, res) => {
     try {
@@ -50,6 +51,11 @@ app.get('/videoApi', async (req, res) => {
         return res.send(error);
     }
 
+});
+
+app.get('/getStats', async (req, res) => {
+    const result = await _getStats.getStats('garyVideo.mp4');
+    return res.send(result);
 });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

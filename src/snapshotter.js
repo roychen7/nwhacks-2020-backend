@@ -12,3 +12,9 @@ const snapshotter = exports.snapshotter = async function snapshotter(filename) {
         folder: './output',
     });
 }
+
+const getLength = exports.getLength = function getLength() {
+    return 10;
+}
+
+

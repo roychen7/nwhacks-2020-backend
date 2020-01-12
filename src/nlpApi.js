@@ -1,4 +1,4 @@
-const nlpApi = exports.nlpApi = async function nlpApi(inputText) {
+const nlpApi = exports.nlpApi = async function nlpApi(inputText, timestamp) {
   // Imports the Google Cloud client library
   const language = require('@google-cloud/language');
 
@@ -13,7 +13,7 @@ const nlpApi = exports.nlpApi = async function nlpApi(inputText) {
     type: 'PLAIN_TEXT',
   };
 
-  // Detects the sentiment of the text
+  // Detects the sentiment of the text,
   const [result] = await client.analyzeSentiment({
     document: document
   });
@@ -26,6 +26,7 @@ const nlpApi = exports.nlpApi = async function nlpApi(inputText) {
   return {
     text: text,
     sentiment_score: sentiment.score,
-    sentiment_magnitude: sentiment.magnitude
+    sentiment_magnitude: sentiment.magnitude,
+    timestamp: timestamp
   }
 }
