@@ -3,6 +3,8 @@ const _nlp = require('./nlpApi.js');
 const _snapshotter = require('./snapshotter.js');
 const _videoApi = require('./videoApi.js');
 const fs = require('fs');
+const _bucketUpload = require('./bucketUploadGCS.js');
+const path = require('path');
 
 let map = new Map([
     ['LIKELY', 3],
@@ -18,6 +20,18 @@ const getStats = exports.getStats = async function getStats(filename) {
     console.log('Stats are being generated...');
     console.time('run');
 
+    const directory = './output';
+
+    fs.readdir(directory, (err, files) => {
+        if (err) throw err;
+
+        for (const file of files) {
+            fs.unlink(path.join(directory, file), err => {
+                if (err) throw err;
+            });
+        }
+    });
+
     await _snapshotter.snapshotter(filename);
 
     let functionList = [];
@@ -31,7 +45,8 @@ const getStats = exports.getStats = async function getStats(filename) {
         return result;
     });
 
-    const retVal = await _videoApi.videoApi('call-me-maybe.mp4');
+    // await _bucketUpload.uploadObject(filename);
+    const retVal = await _videoApi.videoApi(filename);
     const transcript = retVal.transcript;
     const listOfWords = retVal.listOfWords;
 
@@ -84,14 +99,22 @@ const getStats = exports.getStats = async function getStats(filename) {
         surprise: 0
     }
 
-    faceMoods.forEach((faceMood) => {
-        sumFaceMood.joy += map.get((faceMood[0].joy) ? faceMood[0].joy : 0);
-        sumFaceMood.anger += map.get((faceMood[0].anger) ? faceMood[0].anger : 0);
-        sumFaceMood.sorrow += map.get((faceMood[0].sorrow) ? faceMood[0].sorrow : 0);
-        sumFaceMood.surprise += map.get((faceMood[0].surprise) ? faceMood[0].surprise : 0);
-    });
-
-    // console.log(faceMoods);
+    try {
+        faceMoods.forEach((faceMood) => {
+            sumFaceMood.joy += map.get((faceMood[0].joy) ? faceMood[0].joy : 0);
+            sumFaceMood.anger += map.get((faceMood[0].anger) ? faceMood[0].anger : 0);
+            sumFaceMood.sorrow += map.get((faceMood[0].sorrow) ? faceMood[0].sorrow : 0);
+            sumFaceMood.surprise += map.get((faceMood[0].surprise) ? faceMood[0].surprise : 0);
+        });
+    } catch (error) {
+        console.log(error);
+        sumFaceMood = {
+            joy: 0,
+            anger: 0,
+            sorrow: 0,
+            surprise: 0
+        };
+    }
 
     console.log('Generating stats complete');
     console.timeEnd('run');

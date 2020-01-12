@@ -8,7 +8,7 @@ const snapshotter = exports.snapshotter = async function snapshotter(filename) {
     ffmpeg('./resource/' + filename)
     .screenshots({
         count: 10,
-        filename: 'thumbnail-at-%s-seconds.png',
+        filename: 'thumbnail-at-%s-seconds.jpg',
         folder: './output',
     });
 }

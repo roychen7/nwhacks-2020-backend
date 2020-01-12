@@ -11,6 +11,10 @@ const _getStats = require('./src/getStats.js');
 
 app.use(express.json());
 
+app.get('/hw', (req, res) => {
+    res.send('Hello World!');
+  });
+
 app.get('/visionApi', async (req, res) => {
     try {
         const filename = req.body.filename;
@@ -87,3 +91,9 @@ app.get('/getStats', async (req, res) => {
 });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+// const server = app.listen(3000, () => {
+//     const host = server.address().address;
+//     const port = server.address().port;
+  
+//     console.log(`Example app listening at http://${host}:${port}`);
+//   });
