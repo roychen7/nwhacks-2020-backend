@@ -31,21 +31,24 @@ const getStats = exports.getStats = async function getStats(filename) {
         return result;
     });
 
-    console.log(faceMoods);
-
     const retVal = await _videoApi.videoApi('call-me-maybe.mp4');
     const transcript = retVal.transcript;
     const listOfWords = retVal.listOfWords;
 
     let barData = new Map();
     listOfWords.forEach(word => {
-        if (!barData.has(word)){
-            barData.set(word, 1)
+        if (!barData.has(word)) {
+            barData.set(word.word, 1)
         } else {
-            let curr = barData.get(word);
-            barData.set(word, curr + 1);
+            let curr = barData.get(word.word);
+            barData.set(word.word, curr + 1);
         }
-    })
+    });
+
+    // barData.set('So', barData.get('So') + 3);
+    // barData.set('call', barData.get('call') + 2);
+    // barData.set('me', barData.get('me') + 5);
+    // console.log(barData);
 
     let sentences = transcript.split(". ");
 
@@ -53,20 +56,15 @@ const getStats = exports.getStats = async function getStats(filename) {
 
     sentences.forEach(sentence => {
         let words = sentence.split(" ");
-        console.log(words);
         listOfWords.forEach(w => {
             if (w.word === words[0]) {
-                firstWordTimes.push(
-                    {
-                        timestamp: w.start_time,
-                        sentence: sentence
-                    }
-                )
+                firstWordTimes.push({
+                    timestamp: w.start_time,
+                    sentence: sentence
+                })
             }
         })
     });
-
-    console.log(firstWordTimes);
 
     let sentenceCall = [];
     firstWordTimes.forEach((firstWord) => {
@@ -77,7 +75,7 @@ const getStats = exports.getStats = async function getStats(filename) {
         return nlpResult;
     });
 
-    console.log(callNlp);
+    // console.log(callNlp);
 
     let sumFaceMood = {
         joy: 0,
@@ -86,12 +84,6 @@ const getStats = exports.getStats = async function getStats(filename) {
         surprise: 0
     }
 
-    console.log(faceMoods);
-    console.log(faceMoods[0][0].joy)
-    console.log(faceMoods[0][0].anger)
-    console.log(faceMoods[0][0].sorrow)
-    console.log(faceMoods[0][0].surprise)
-
     faceMoods.forEach((faceMood) => {
         sumFaceMood.joy += map.get((faceMood[0].joy) ? faceMood[0].joy : 0);
         sumFaceMood.anger += map.get((faceMood[0].anger) ? faceMood[0].anger : 0);
@@ -99,6 +91,7 @@ const getStats = exports.getStats = async function getStats(filename) {
         sumFaceMood.surprise += map.get((faceMood[0].surprise) ? faceMood[0].surprise : 0);
     });
 
+    // console.log(faceMoods);
 
     console.log('Generating stats complete');
     console.timeEnd('run');
@@ -106,7 +99,7 @@ const getStats = exports.getStats = async function getStats(filename) {
     return {
         sumFaceMood: sumFaceMood,
         timestamps: callNlp,
-        barData: barData
+        barData: sortTop5(barData)
     }
 }
 
@@ -118,4 +111,19 @@ function callWithSentence(sentence, timestamp) {
     return _nlp.nlpApi(sentence, timestamp);
 }
 
+function sortTop5(barData) {
+    let result = [];
+    barData[Symbol.iterator] = function* () {
+        yield*[...this.entries()].sort((a, b) => a[1] - b[1]);
+    }
 
+    for (let [key, value] of barData) { // get data sorted
+        result.push({
+            word: key,
+            value: value
+        });
+        // console.log(key + ' ' + value);
+    }
+    // console.log(result);
+    return result.slice(result.length - 5);
+}

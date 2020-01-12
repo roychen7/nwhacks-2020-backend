@@ -18,7 +18,6 @@ app.get('/visionApi', async (req, res) => {
         console.log(error);
         return res.send(error);
     }
-
 });
 
 app.get('/nlpApi', async (req, res) => {
@@ -50,7 +49,6 @@ app.get('/videoApi', async (req, res) => {
     } catch (error) {
         return res.send(error);
     }
-
 });
 
 app.get('/getStats', async (req, res) => {
@@ -58,4 +56,10 @@ app.get('/getStats', async (req, res) => {
     return res.send(result);
 });
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+// app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+const server = app.listen(3000, () => {
+    const host = server.address().address;
+    const port = server.address().port;
+  
+    console.log(`Example app listening at http://${host}:${port}`);
+  });
