@@ -5,17 +5,9 @@ const snapshotter = exports.snapshotter = async function snapshotter() {
     ffmpeg.setFfmpegPath(ffmpegPath);
     ffmpeg.setFfprobePath(ffprobePath);
 
-    // var proc = new ffmpeg('/nwHacks/nwhacks2020-backend/resource/garyVideo.mp4')
-    // console.log()
-    // .takeScreenshots({
-    //     count: 4
-    //   }, '/nwHacks/nwhacks2020-backend/output', function(err) {
-    //   console.log('screenshots were saved')
-    // });
-
     ffmpeg('/nwHacks/nwhacks2020-backend/resource/garyVideo.mp4')
     .screenshots({
-        count: 4,
+        count: 10,
         filename: 'thumbnail-at-%s-seconds.png',
         folder: '/nwHacks/nwhacks2020-backend/output',
     });
