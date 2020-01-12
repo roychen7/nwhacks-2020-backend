@@ -1,14 +1,14 @@
 // Imports the Google Cloud Video Intelligence library
 const videoIntelligence = require('@google-cloud/video-intelligence');
 
-const videoApi = exports.videoApi = async function videoApi(){
+const videoApi = exports.videoApi = async function videoApi(filename){
     // Creates a client
     const client = new videoIntelligence.VideoIntelligenceServiceClient();
 
     /**
      * TODO(developer): Uncomment the following line before running the sample.
      */
-    const gcsUri = 'gs://video-bucket-nwhacks2020/call-me-maybe.mp4';
+    const gcsUri = 'gs://video-bucket-nwhacks2020/' + filename;
 
     const videoContext = {
     speechTranscriptionConfig: {
