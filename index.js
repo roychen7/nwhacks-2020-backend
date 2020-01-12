@@ -9,21 +9,32 @@ const _videoApi = require('./src/videoApi.js');
 const _bucketUpload = require('./src/bucketUploadGCS.js');
 const _getStats = require('./src/getStats.js');
 
+app.use(express.json());
+
 app.get('/visionApi', async (req, res) => {
     try {
-        const result = await _vision.visionApi('kendricHappy.jpg');
-        console.log(result);
-        return res.status(200).send(result);
+        const filename = req.body.filename;
+        if (filename) {
+            const result = await _vision.visionApi(filename);
+            return res.status(200).send(result);
+        } else {
+            throw 'No given filename';
+        }
     } catch (error) {
-        console.log(error);
         return res.send(error);
     }
 });
 
 app.get('/nlpApi', async (req, res) => {
     try {
-        const result = await _nlp.nlpApi('I do not ever want to see your stupid fucking face again you fucking piece of shit!');
-        return res.status(200).send(result);
+        const text = req.body.text;
+        console.log(text);
+        if (text) {
+            const result = await _nlp.nlpApi(text);
+            return res.status(200).send(result);
+        } else {
+            throw 'No given text';
+        }
     } catch (error) {
         return res.send(error);
     }
@@ -31,8 +42,13 @@ app.get('/nlpApi', async (req, res) => {
 
 app.get('/snapshotter', async (req, res) => {
     try {
-        const result = await _snapshotter.snapshotter('garyVideo.mp4');
-        return res.status(200).send(result);
+        const filename = req.body.filename;
+        if (filename) {
+            const result = await _snapshotter.snapshotter(filename);
+            return res.status(200).send(result);
+        } else {
+            throw 'No given filname';
+        }
     } catch (error) {
         return res.send(error);
     }
@@ -40,26 +56,34 @@ app.get('/snapshotter', async (req, res) => {
 
 app.get('/videoApi', async (req, res) => {
     try {
-        await _bucketUpload.uploadObject('call-me-maybe.mp4').then(async () => {
-            const result = await _videoApi.videoApi('call-me-maybe.mp4');
-            return res.status(200).send(result);
-        }).catch((error) => {
-            throw error;
-        });
+        const filename = req.body.filename;
+        if (filename) {
+            await _bucketUpload.uploadObject(filename).then(async () => {
+                const result = await _videoApi.videoApi(filename);
+                return res.status(200).send(result);
+            }).catch((error) => {
+                throw error;
+            });
+        } else {
+            throw 'No given filename';
+        }
     } catch (error) {
         return res.send(error);
     }
 });
 
 app.get('/getStats', async (req, res) => {
-    const result = await _getStats.getStats('garyVideo.mp4');
-    return res.send(result);
+    try {
+        const filename = req.body.filename;
+        if (filename) {
+            const result = await _getStats.getStats(filename);
+            return res.send(result);
+        } else {
+            throw 'No given filname';
+        }
+    } catch (error) {
+        return res.send(error);
+    }
 });
 
-// app.listen(port, () => console.log(`Example app listening on port ${port}!`));
-const server = app.listen(3000, () => {
-    const host = server.address().address;
-    const port = server.address().port;
-  
-    console.log(`Example app listening at http://${host}:${port}`);
-  });
+app.listen(port, () => console.log(`Example app listening on port ${port}!`));
